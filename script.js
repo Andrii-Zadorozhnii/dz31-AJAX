@@ -11,8 +11,8 @@ async function sendRequest() {
     //3. On success request from server
     xhr.onload = function () {
         data = JSON.parse(xhr.response);
-        console.log(data);
-        createSearchResultCard(); // calling the function here
+        // console.log(data);
+        // createSearchResultCard(); // calling the function here
     };
 
     // Send request to server
@@ -21,12 +21,28 @@ async function sendRequest() {
 
 function createCard(item) {
     // Create search Card
-    let searchCard = document.createElement("div");
+    searchCard = document.createElement("div");
+    searchCard.classList.add("search-card");
+    let searchNameYear = document.createElement("div");
+    Object.assign(searchNameYear.style, {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "start",
+        
+    });
+    let searchNameButton = document.createElement("div");
+    Object.assign(searchNameButton.style, {
+        display: "flex",
+        justifyContent: "space-between",
+        width: "100%",
+    });
+
 
     Object.assign(searchCard.style, {
         padding: "5px",
         display: "flex",
         alignItems: "center",
+        gap: "20px",
     });
 
     let cardFilmImage = document.createElement("img");
@@ -37,15 +53,31 @@ function createCard(item) {
     });
     let cardFilmName = document.createElement("h2");
     Object.assign(cardFilmName.style, {
-        textAlign: "center",
-        marginRight: "20px",
-        fontSize: "20px",
+        textAlign: "start",
+        marginBottom: "5px",
+        fontSize: "25px",
+        fontWeight: "bold",
     });
     let cardYears = document.createElement("p");
     Object.assign(cardYears.style, {
         textAlign: "center",
         marginRight: "20px",
         fontSize: "20px",
+    });
+    let details = document.createElement('button');
+    Object.assign(details.style, {
+        textAlign: "center",
+        position: 'relative',
+        fontSize: "15px",
+        width: "50px",
+        color: "gray",
+    });
+    details.textContent = "Info"
+    Object.assign(details.style, {
+        padding: "10px",
+        border: "1px solid gray",
+        background: "inherit",
+        borderRadius: "10px",
     });
 
     // add data to card
@@ -55,29 +87,30 @@ function createCard(item) {
 
     // add elements to card
     searchCard.appendChild(cardFilmImage);
-    searchCard.appendChild(cardFilmName);
-    searchCard.appendChild(cardYears);
+    searchNameYear.appendChild(cardFilmName);
+    searchCard.appendChild(searchNameYear);
+    searchCard.appendChild(searchNameButton);
+    searchNameYear.appendChild(cardYears);
+    searchNameButton.appendChild(searchNameYear);
+    searchNameButton.appendChild(details);
+
 
     return searchCard;
 }
 
+
+
 // search result card
 function createSearchResultCard() {
-
-    // for(i = 0; i < 1; i++) {
-    //     let filmCard = createCard(i);
-    //     showSearchResult.appendChild(filmCard);
-    // }
-
-
     data.Search.map((i) => {
-        let filmCard = createCard(i);
+        filmCard = createCard(i);
         showSearchResult.appendChild(filmCard);
     });
 }
-
+let filmCard;
 let data;
-let inputFilmNameValue = "";
+let inputFilmNameValue;
+let searchCard;
 
 
 // Creater Web interface
@@ -91,10 +124,17 @@ const searchResult = document.createElement('div');
 const searcResultFilmName = document.createElement('h2');
 const searcResultActorName = document.createElement('h2');
 const showSearchResult = document.createElement('div');
+showSearchResult.classList.add("cards-area");
 
 header.innerHTML = "Movie Search";
 
-
+// add elements to DOM
+body.appendChild(header);
+body.appendChild(main);
+main.appendChild(inputSections);
+inputSections.appendChild(inputFilmName);
+inputSections.appendChild(findFilmButton);
+inputSections.appendChild(showSearchResult);
 
 
 
@@ -103,18 +143,38 @@ header.innerHTML = "Movie Search";
 
 //By Input
 inputFilmName.addEventListener("input", () => {
-    inputFilmNameValue = (inputFilmName.value).trim();
-    console.log(inputFilmNameValue);
-    sendRequest();
-    createSearchResultCard();
+
+        if (inputFilmName.value.length >= 2) {
+            inputFilmNameValue = (inputFilmName.value).trim();
+            sendRequest();
+            createSearchResultCard();
+        } else if (inputFilmName.value.length < 2) {
+            // let deleteCard = document.getElementsByClassName('.search-card');
+            let elements = document.querySelectorAll('.search-card');
+            elements.forEach(function (element) {
+                element.remove();
+            });
+            // showSearchResult.removeChild(deleteCard);
+        } else {
+            console.log("error");
+        }
 });
 
 // By Button
 findFilmButton.addEventListener("click", () => {
-    inputFilmNameValue = (inputFilmName.value).trim();
-    console.log(inputFilmNameValue);
-    sendRequest();
-    createSearchResultCard();
+
+    if (inputFilmName.value.length >= 2) {
+        inputFilmNameValue = (inputFilmName.value).trim();
+        sendRequest();
+        createSearchResultCard();
+    } else if (inputFilmName.value.length < 2) {
+        let elements = document.querySelectorAll('.search-card');
+        elements.forEach(function (element) {
+            element.remove();
+        });
+    } else {
+        console.log("error");
+    }
 });
 
 
@@ -136,20 +196,20 @@ Object.assign(header.style, {
     fontSize: "40px",
     textAlign: "center",
     padding: '25px',
-    background: "rgb(9,14,138,1)",
+    background: "#2f2f2f",
     borderBottom: "2px solid black",
 });
 
 
 Object.assign(main.style, {
-    background: "linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(9,14,138,1) 100%)",
+    background: "#2f2f2f",
     width: "100vw",
     height: "100vh",
     textAlign: "center",
 });
 
 Object.assign(inputSections.style, {
-    background: "rgb(9,14,138,0)",
+    background: "black",
     width: "100vw",
     height: "contentFit",
     textAlign: "center",
@@ -165,6 +225,7 @@ Object.assign(inputFilmName.style, {
     color: "black",
     marginRight: "20px",
     borderRadius: "10px",
+    fontSize: "30px",
 });
 
 Object.assign(findFilmButton.style, {
@@ -176,6 +237,8 @@ Object.assign(findFilmButton.style, {
     padding: "5px",
     borderRadius: "10px",
     background: "inherit",
+    position: "relative",
+    top: "-4px",
 });
 
 Object.assign(showSearchResult.style, {
@@ -188,16 +251,3 @@ Object.assign(showSearchResult.style, {
     borderRadius: "10px",
     overflowY: "scroll",
 });
-
-
-
-
-
-
-// add elements to DOM
-body.appendChild(header);
-body.appendChild(main);
-main.appendChild(inputSections);
-inputSections.appendChild(inputFilmName);
-inputSections.appendChild(findFilmButton);
-inputSections.appendChild(showSearchResult);
