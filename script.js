@@ -1,22 +1,83 @@
-
 async function sendRequest() {
     //1. Create object request
     const xhr = new XMLHttpRequest();
 
     //2. Where send and parameters
-    xhr.open('GET', `https://omdbapi.com/?s=${inputFilmNameValue}&page=1&apikey=5f4e693c`);
-    
+    xhr.open(
+        "GET",
+        `https://omdbapi.com/?s=${inputFilmNameValue}&page=1&apikey=5f4e693c`
+    );
 
     //3. On success request from server
     xhr.onload = function () {
-        console.log(xhr.status);
-        console.log(xhr.response);
-        const data = JSON.parse(xhr.response);
+        data = JSON.parse(xhr.response);
         console.log(data);
-    }
+        createSearchResultCard(); // calling the function here
+    };
+
     // Send request to server
-    xhr.send()
+    xhr.send();
 }
+
+function createCard(item) {
+    // Create search Card
+    let searchCard = document.createElement("div");
+
+    Object.assign(searchCard.style, {
+        padding: "5px",
+        display: "flex",
+        alignItems: "center",
+    });
+
+    let cardFilmImage = document.createElement("img");
+    Object.assign(cardFilmImage.style, {
+        width: "50px",
+        minHeight: "70px",
+        marginRight: "20px",
+    });
+    let cardFilmName = document.createElement("h2");
+    Object.assign(cardFilmName.style, {
+        textAlign: "center",
+        marginRight: "20px",
+        fontSize: "20px",
+    });
+    let cardYears = document.createElement("p");
+    Object.assign(cardYears.style, {
+        textAlign: "center",
+        marginRight: "20px",
+        fontSize: "20px",
+    });
+
+    // add data to card
+    cardFilmImage.src = item.Poster; // setting the image source
+    cardFilmName.textContent = item.Title; // setting the film name
+    cardYears.textContent = item.Year; // setting the year
+
+    // add elements to card
+    searchCard.appendChild(cardFilmImage);
+    searchCard.appendChild(cardFilmName);
+    searchCard.appendChild(cardYears);
+
+    return searchCard;
+}
+
+// search result card
+function createSearchResultCard() {
+
+    // for(i = 0; i < 1; i++) {
+    //     let filmCard = createCard(i);
+    //     showSearchResult.appendChild(filmCard);
+    // }
+
+
+    data.Search.map((i) => {
+        let filmCard = createCard(i);
+        showSearchResult.appendChild(filmCard);
+    });
+}
+
+let data;
+let inputFilmNameValue = "";
 
 
 // Creater Web interface
@@ -31,10 +92,11 @@ const searcResultFilmName = document.createElement('h2');
 const searcResultActorName = document.createElement('h2');
 const showSearchResult = document.createElement('div');
 
+header.innerHTML = "Movie Search";
 
 
 
-let inputFilmNameValue = "";
+
 
 
 // Receaving data from server
@@ -43,25 +105,19 @@ let inputFilmNameValue = "";
 inputFilmName.addEventListener("input", () => {
     inputFilmNameValue = (inputFilmName.value).trim();
     console.log(inputFilmNameValue);
-    sendRequest()
-    console.log(sendRequest());
+    sendRequest();
+    createSearchResultCard();
 });
 
 // By Button
 findFilmButton.addEventListener("click", () => {
     inputFilmNameValue = (inputFilmName.value).trim();
     console.log(inputFilmNameValue);
-    sendRequest()
-    console.log(sendRequest());
+    sendRequest();
+    createSearchResultCard();
 });
 
-// Create search Card
-const searchCard = document.createElement('div');
-const cardFilmImage = document.createElement('img');
-const cardFilmName = document.createElement('h2');
-const cardYears = document.createElement('p');
 
-// for (let i = 0; i < data.Search.length; i++) {
 
 
 
@@ -70,69 +126,16 @@ const cardYears = document.createElement('p');
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-findFilmButton.innerHTML = "Search movie"
+findFilmButton.innerText = "Search movie"
 
 //Main windows class
 Object.assign(header.style, {
     width: "100vw",
     height: "100px",
+    color: "white",
+    fontSize: "40px",
+    textAlign: "center",
+    padding: '25px',
     background: "rgb(9,14,138,1)",
     borderBottom: "2px solid black",
 });
@@ -176,22 +179,15 @@ Object.assign(findFilmButton.style, {
 });
 
 Object.assign(showSearchResult.style, {
-    height: "300px",
+    maxHeight: "300px",
     maxWidth: "670px",
     width: "100%",
     background: "white",
     margin: "0 auto",
     marginTop: "10px",
     borderRadius: "10px",
+    overflowY: "scroll",
 });
-
-
-
-
-
-
-
-
 
 
 
